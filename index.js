@@ -6,6 +6,8 @@ require('update-electron-app')({
 const { app, BrowserWindow, Menu, ipcMain, shell } = require('electron');
 const isDev = require('electron-is-dev');
 
+if (require('electron-squirrel-startup')) app.quit();
+
 function createWindow() {
   // Create the browser window.
   const win = new BrowserWindow({
