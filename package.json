@@ -15,13 +15,14 @@
   "author": "ender",
   "license": "MIT",
   "dependencies": {
-    "electron-squirrel-startup": "^1.0.0",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "adm-zip": "^0.5.10",
     "axios": "^1.2.1",
     "electron-is-dev": "^2.0.0",
+    "electron-squirrel-startup": "^1.0.0",
+    "electron-updater": "^5.3.0",
     "fs": "^0.0.1-security",
     "node-fetch": "^2.6.7",
     "react": "^18.2.0",
@@ -34,12 +35,12 @@
     "web-vitals": "^2.1.4"
   },
   "devDependencies": {
-    "@electron-forge/publisher-github": "^6.0.4",
     "@electron-forge/cli": "^6.0.4",
     "@electron-forge/maker-deb": "^6.0.4",
     "@electron-forge/maker-rpm": "^6.0.4",
     "@electron-forge/maker-squirrel": "^6.0.4",
     "@electron-forge/maker-zip": "^6.0.4",
+    "@electron-forge/publisher-github": "^6.0.4",
     "electron": "22.0.0"
   }
 }

@@ -1,7 +1,5 @@
 const path = require('path');
-require('update-electron-app')({
-  repo: 'DrawLife2022/Launcher'
-})
+const { autoUpdater } = require("electron-updater")
 
 const { app, BrowserWindow, Menu, ipcMain, shell } = require('electron');
 const isDev = require('electron-is-dev');
@@ -65,6 +63,23 @@ app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit();
   }
+});
+
+app.on('ready', () => {
+  autoUpdater.checkForUpdatesAndNotify();
+})
+
+autoUpdater.on("update-downloaded", (_event, releaseNotes, releaseName) => {
+	const dialogOpts = {
+		type: 'info',
+		buttons: ['Relancer'],
+		title: 'Drawlife',
+		message: process.platform === 'win32' ? releaseNotes : releaseName,
+		detail: "Une nouvelle version vient de s'installer"
+	};
+	dialog.showMessageBox(dialogOpts).then((returnValue) => {
+		if (returnValue.response === 0) autoUpdater.quitAndInstall()
+	})
 });
 
 app.on('activate', () => {
