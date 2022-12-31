@@ -12,7 +12,9 @@ module.exports = {
       },
     },
   ],
-  packagerConfig: {},
+  packagerConfig: {
+    icon: './images/icon.ico'
+  },
   rebuildConfig: {},
   makers: [
     {
