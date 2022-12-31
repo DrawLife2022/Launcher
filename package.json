@@ -1,7 +1,7 @@
 {
   "name": "drawlife",
   "productName": "drawlife",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "Launcher drawlife",
   "main": "index.js",
   "scripts": {
