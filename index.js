@@ -1,8 +1,12 @@
 const path = require('path');
-const { autoUpdater } = require("electron-updater")
+const package = require('./package.json')
+const fetch = require('node-fetch')
+const fs = require('fs')
 
-const { app, BrowserWindow, Menu, ipcMain, shell } = require('electron');
+var exec = require('child_process').execSync;
+const { app, BrowserWindow, Menu, dialog, ipcMain, shell } = require('electron');
 const isDev = require('electron-is-dev');
+const HTTP_URL = "https://api.drawlife.eu"
 
 if (require('electron-squirrel-startup')) app.quit();
 
@@ -25,9 +29,7 @@ function createWindow() {
   // and load the index.html of the app.
   // win.loadFile("index.html");
   win.loadURL(
-    isDev
-      ? 'http://localhost:3000'
-      : `file://${path.join(__dirname, './build/index.html')}`
+    `file://${path.join(__dirname, './build/index.html')}`
   );
 
   win.setResizable(false)
@@ -65,22 +67,62 @@ app.on('window-all-closed', () => {
   }
 });
 
-app.on('ready', () => {
-  autoUpdater.checkForUpdatesAndNotify();
-})
+async function getVersionOfficial() {
+  const response = await fetch(HTTP_URL + "/Assets/launcher/version/launcher")
+  if (response.status !== 200)
+    return undefined
+  return response.text()
+}
 
-autoUpdater.on("update-downloaded", (_event, releaseNotes, releaseName) => {
-	const dialogOpts = {
+const URL = 'https://api.drawlife.eu/Assets/launcher/download/launcher.exe'
+
+async function downloadExe() {
+  const res = await fetch(URL);
+  const fileStream = fs.createWriteStream("./tmp/update.exe");
+  const contentLengthHeader = res.headers.get('Content-Length')
+  const resourceSize = parseInt(contentLengthHeader, 10)
+  var recievedLength = 0
+  await new Promise((resolve, reject) => {
+      res.body.pipe(fileStream);
+      res.body.on("error", reject);
+      res.body.on('readable', () => {
+          var chunk
+          
+          while (null !== (chunk = res.body.read())) {
+              recievedLength = recievedLength + chunk.length
+              console.log("Download percentage:", Math.floor((recievedLength / resourceSize) * 100), "%")
+          }
+      })
+      fileStream.on("finish", resolve);
+  });
+}
+
+app.on('ready', async () => {
+  var versionNow = package.version
+  var versionOfficial = await getVersionOfficial();
+
+  console.log(versionNow, versionOfficial)
+  if (versionNow === versionOfficial) return;
+
+  await downloadExe()
+  const dialogOpts = {
 		type: 'info',
 		buttons: ['Relancer'],
-		title: 'Drawlife',
-		message: process.platform === 'win32' ? releaseNotes : releaseName,
-		detail: "Une nouvelle version vient de s'installer"
+		title: 'Mise à jour Drawlife',
+		message: versionOfficial,
+		detail: 'Une nouvelle version du launcher est disponible'
 	};
 	dialog.showMessageBox(dialogOpts).then((returnValue) => {
-		if (returnValue.response === 0) autoUpdater.quitAndInstall()
+    exec("update.bat", [], (error, stdout, stderr) => {
+      if (error) {
+        console.log(error)
+      }
+      console.log(stderr);
+      console.log(stdout);
+    })
+    app.quit()
 	})
-});
+})
 
 app.on('activate', () => {
   if (BrowserWindow.getAllWindows().length === 0) {
