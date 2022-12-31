@@ -13,6 +13,7 @@ if (require('electron-squirrel-startup')) app.quit();
 function createWindow() {
   // Create the browser window.
   const win = new BrowserWindow({
+    icon: __dirname + "/images/icon.ico",
     title: "Drawlife Launcher",
     width: 1281,
     show: false,
