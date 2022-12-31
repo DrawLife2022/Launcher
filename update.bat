@@ -1,1 +1,0 @@
-start ./tmp/update.exe

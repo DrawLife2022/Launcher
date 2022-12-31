@@ -13,6 +13,7 @@ if (require('electron-squirrel-startup')) app.quit();
 function createWindow() {
   // Create the browser window.
   const win = new BrowserWindow({
+    title: "Drawlife Launcher",
     width: 1281,
     show: false,
     height: 720,
@@ -78,7 +79,12 @@ const URL = 'https://api.drawlife.eu/Assets/launcher/download/launcher.exe'
 
 async function downloadExe() {
   const res = await fetch(URL);
-  const fileStream = fs.createWriteStream("./tmp/update.exe");
+  try {
+    fs.mkdirSync("C:\\Users\\leboss\\AppData\\Local\\.drawlife-tmp", {recursive: true})
+  } catch (error) {
+    console.log(error)
+  }
+  const fileStream = fs.createWriteStream("C:\\Users\\leboss\\AppData\\Local\\.drawlife-tmp\\update.exe");
   const contentLengthHeader = res.headers.get('Content-Length')
   const resourceSize = parseInt(contentLengthHeader, 10)
   var recievedLength = 0
@@ -113,7 +119,7 @@ app.on('ready', async () => {
 		detail: 'Une nouvelle version du launcher est disponible'
 	};
 	dialog.showMessageBox(dialogOpts).then((returnValue) => {
-    exec("update.bat", [], (error, stdout, stderr) => {
+    exec("C:\\Users\\leboss\\AppData\\Local\\.drawlife-tmp\\update.exe", [], (error, stdout, stderr) => {
       if (error) {
         console.log(error)
       }
