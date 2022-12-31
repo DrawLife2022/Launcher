@@ -13,7 +13,7 @@ module.exports = {
     },
   ],
   packagerConfig: {
-    icon: './images/icon.ico'
+    icon: './images/icon'
   },
   rebuildConfig: {},
   makers: [
